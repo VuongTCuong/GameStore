@@ -18,5 +18,7 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
                  "where gameID=?2 " +
                  "order by temp_num desc ")
     List<Review> findAll_byGameandUser(Integer userID, Integer gameID);
+
+    List<Review> findByUserID(Integer userID);
 }
 

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gamestore.gamestore.dto.CreateGameDTO;
@@ -83,4 +83,12 @@ public class GameController {
     public ResponseEntity<Map<String,Object>> deleteGameKey(@PathVariable Integer keyID){
         return ResponseEntity.ok().body(gameService.deleteGameKey(keyID));
     }
+
+    @GetMapping("/filter")
+    public ResponseEntity<List<Game>> filterByGameNameAndPrice(@RequestParam(required = false) String gameName, 
+                                                               @RequestParam(required = false) float minPrice, 
+                                                               @RequestParam(required = false) float maxPrice){
+        return ResponseEntity.ok().body(gameService.filterByGameNameAndPrice(gameName, minPrice, maxPrice));
+    }
+
 }

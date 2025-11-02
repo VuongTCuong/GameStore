@@ -50,7 +50,6 @@ public class CartService {
     }
 
     // thêm game vào giỏ hàng
-
     public Map<String,Object> addtoCart(UserDetails userDetails, CreateCartDetailDTO createCartDetailDTO){
         
         Cart cart = getCartbyUser(userDetails);
@@ -59,17 +58,16 @@ public class CartService {
             throw new MainErrorException("Giá không hợp lệ");
         }
       
-        Game game = gameRepo.findById(createCartDetailDTO.getGameID()).orElseThrow(()-> new MainErrorException("Mã trò chơi không hợp lệ"));
+        Game game = gameRepo.findById(createCartDetailDTO.getGameID()).orElseThrow(()-> new MainErrorException("Mã trò chơi không tồn tại"));
 
         if(game.getStockQuantity()<createCartDetailDTO.getQuantity() || createCartDetailDTO.getQuantity()<=0){
             throw new MainErrorException("Số lượng không hợp lệ");
         }
-
-        CartDetail cartDetail = new CartDetail();
+        CartDetail cartDetail = cartDetailRepo.findByCartIDAndGameID(cart.getCartID(), createCartDetailDTO.getGameID()).orElse(new CartDetail());
         cartDetail.setCartID(cart.getCartID());
         cartDetail.setGameID(createCartDetailDTO.getGameID());
         cartDetail.setPriceAtPurchase(createCartDetailDTO.getPriceAtPurchase());
-        cartDetail.setQuantity(createCartDetailDTO.getQuantity());
+        cartDetail.setQuantity(createCartDetailDTO.getQuantity() + cartDetail.getQuantity());
      
         cartDetailRepo.save(cartDetail);
 
@@ -113,7 +111,7 @@ public class CartService {
 
     // xoá một sản phẩm giỏ hàng
     public Map<String,Object> deleteCart(UserDetails userDetails, Integer gameID){
-        gameRepo.findById(gameID).orElseThrow(()-> new MainErrorException("Mã trò chơi không hợp lệ"));
+        gameRepo.findById(gameID).orElseThrow(()-> new MainErrorException("Mã trò chơi không tồn tại"));
         Cart cart = getCartbyUser(userDetails);
         
         CartDetail cartDetail = cartDetailRepo.findByCartIDAndGameID(cart.getCartID(), gameID).orElseThrow(()-> new MainErrorException("Không tìm thấy thông tin giỏ hàng để xoá"));

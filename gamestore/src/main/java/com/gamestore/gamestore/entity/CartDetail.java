@@ -6,13 +6,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+
 import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
 @IdClass(CartDetailID.class)
 public class CartDetail {
@@ -24,5 +23,9 @@ public class CartDetail {
     
     private float priceAtPurchase;
     private Integer quantity;
+
+    public CartDetail(){
+        quantity = 0;
+    }
 
 }

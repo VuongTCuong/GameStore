@@ -34,7 +34,7 @@ public class ReviewService {
 
         List<Review> reviews = reviewRepo.findAll_byGameandUser(user.getUserID(), gameID);
         return Map.of(
-            "userID",user.getUserID(),
+            "userID",user.getUserID(), // thêm ID để frontend biết hiện nút sửa ở những review thuộc về người dùng
             "result",reviews
         );
     }
@@ -54,8 +54,7 @@ public class ReviewService {
         reviewRepo.save(review);
         return Map.of(
             "status","thành công",
-            "message","tạo review thành công",
-            "result",review
+            "message","tạo review thành công"
         );
     }
 
@@ -68,8 +67,7 @@ public class ReviewService {
         reviewRepo.save(review);
         return Map.of(
             "status","thành công",
-            "message","cập nhật review thành công",
-            "result",review
+            "message","cập nhật review thành công"
         );
     }
 

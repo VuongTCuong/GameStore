@@ -11,10 +11,11 @@ import org.springframework.stereotype.Service;
 
 import com.gamestore.gamestore.dto.GetUserDTO;
 import com.gamestore.gamestore.dto.UpdateUserDTO;
-
+import com.gamestore.gamestore.entity.Review;
 import com.gamestore.gamestore.entity.User;
 import com.gamestore.gamestore.exception.MainErrorException;
 import com.gamestore.gamestore.repository.OrdersRepository;
+import com.gamestore.gamestore.repository.ReviewRepository;
 import com.gamestore.gamestore.repository.UserRepository;
 
 
@@ -24,6 +25,9 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepo;
+
+    @Autowired
+    private ReviewRepository reviewRepo;
 
     @Autowired
     private OrdersRepository orderRepo;
@@ -76,10 +80,7 @@ public class UserService {
     // lấy thông tin tất cả user - của admin
     public List<GetUserDTO> getAllUser(){
         List<GetUserDTO> users = userRepo.findAll_noPassword();
-        if(users.isEmpty()){
-            throw new MainErrorException("Không có người dùng nào tồn tại");
-        }
-        return userRepo.findAll_noPassword();
+        return users;
     }
     
     // cập nhật trạng thái user - của admin
@@ -95,15 +96,18 @@ public class UserService {
 
     //xoá user (chỉ khi user đó chưa mua đơn hàng nào) - của admin
     public Map<String,Object> deleteUser(Integer userID){
-        if(!userRepo.existsById(userID)){
-            throw new MainErrorException("Không tìm thấy thông tin người dùng");
-        }
+       
         if(orderRepo.existsByUserID(userID)){
             throw new MainErrorException("Không thể xoá người dùng vì vẫn còn đơn hàng");
+        }   
+        User user = userRepo.findById(userID).orElseThrow(()-> new MainErrorException("Không tìm thấy thông tin người dùng"));
+
+        List<Review> review = reviewRepo.findByUserID(userID);
+        for (Review r : review) {
+            r.setUserID(null);
         }
-
-        userRepo.deleteById(userID);
-
+        reviewRepo.saveAll(review);
+        userRepo.delete(user);
 
         return Map.of(
             "status","thành công",

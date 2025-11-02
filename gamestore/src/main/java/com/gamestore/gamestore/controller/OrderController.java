@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.gamestore.gamestore.dto.CreateCartDetailDTO;
 import com.gamestore.gamestore.dto.UpdateOrderDTO;
+import com.gamestore.gamestore.entity.Orders;
 import com.gamestore.gamestore.service.OrdersService;
 
 @RestController
@@ -27,6 +28,18 @@ public class OrderController {
 
     @Autowired
     private OrdersService ordersService;
+
+    @GetMapping("/get")
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public ResponseEntity<List<Orders>> getOrder(@AuthenticationPrincipal UserDetails userDetails){
+        return ResponseEntity.ok().body(ordersService.getOrders(userDetails));
+    }
+
+    @GetMapping("/get/all")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<Orders>> getAllOrders(){
+        return ResponseEntity.ok().body(ordersService.getAllOrders());
+    }
 
     @PostMapping("/add")
     @PreAuthorize("hasRole('CUSTOMER')")

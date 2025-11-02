@@ -51,6 +51,18 @@ public class OrdersService {
     @Autowired
     private UserRepository userRepo;
 
+    // lấy đơn hàng của bản thân - của customer
+    public List<Orders> getOrders(UserDetails userDetails){
+        User user = userRepo.findByAccount(userDetails.getUsername()).orElseThrow(()-> new MainErrorException("Không tìm thấy người dùng"));
+        List<Orders> orders = ordersRepo.findByUserID(user.getUserID());
+        return orders;
+    }
+
+    // lấy đơn hàng của tất cả customer - của admin
+    public List<Orders> getAllOrders(){
+        return ordersRepo.findAll();
+    }
+
     //tạo đơn hàng - của user
     public Map<String,Object> addOrder(UserDetails userDetails, List<CreateCartDetailDTO> cartDetailDTOs){ // sử dụng lại CreateCartDetailDTO vì đủ thông tin mà order cần (gameID, price, quantity)
         Cart cart = cartService.getCartbyUser(userDetails);

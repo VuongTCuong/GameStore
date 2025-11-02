@@ -10,7 +10,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,7 +35,7 @@ public class UserController {
     }
 
     @PutMapping("/update")
-    @PreAuthorize("hasRole('CUSTOMER')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Map<String,Object>> updateUserInfo(@AuthenticationPrincipal UserDetails userDetails, @RequestBody UpdateUserDTO updateUser){
         return ResponseEntity.ok().body(userService.updateUserInfo(userDetails, updateUser));
     }
@@ -52,5 +52,10 @@ public class UserController {
         return ResponseEntity.ok().body(userService.updateUserState(account, state));
     }
 
+    @DeleteMapping("/delete/{userID}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Map<String,Object>> deleteUser(@PathVariable Integer userID){
+        return ResponseEntity.ok().body(userService.deleteUser(userID));
+    }
    
 }

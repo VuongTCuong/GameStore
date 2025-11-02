@@ -70,9 +70,6 @@ public class GameService {
     // Lấy tất cả trò chơi
     public List<Game> getAllGame(){
         List<Game> games = gameRepo.findAll();
-        if(games.isEmpty()){
-            throw new MainErrorException("Không tìm thấy trò chơi nào");
-        }
         return games;
 
     }
@@ -88,10 +85,7 @@ public class GameService {
 
     // Lấy tất cả key của trò chơi cụ thể 
     public List<GameKey> getGameKey(Integer gameID){
-        List<GameKey> gamekeys = gameKeyRepo.findAllByGameID(gameID);
-        if(gamekeys.isEmpty()){
-            throw new MainErrorException("Không tìm thấy key nào của trò chơi");
-        }
+        List<GameKey> gamekeys = gameKeyRepo.findAllByGameID(gameID);       
         return gamekeys;
     }
 
@@ -157,5 +151,19 @@ public class GameService {
         );
     }
 
+    public List<Game> filterByGameNameAndPrice(String gameName, float minPrice, float maxPrice){
+        
+        if(minPrice<0 || maxPrice<0 || minPrice>maxPrice){
+            throw new MainErrorException("Khoảng giá tiền không hợp lệ");
+        }
 
+        if(gameName.isBlank()){
+            return gameRepo.findByPriceBetween(minPrice, maxPrice);
+        }
+        
+        return gameRepo.findByGameNameContainingAndPriceBetween(gameName, minPrice, maxPrice);
+
+    }
+
+ 
 }

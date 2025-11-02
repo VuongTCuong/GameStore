@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,17 +36,20 @@ public class ReviewController {
     }
 
     @PostMapping("/add/{gameID}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Map<String,Object>> addReview(@AuthenticationPrincipal UserDetails userDetails,
                                                         @Valid @RequestBody CreateReviewDTO createReviewDTO, @PathVariable Integer gameID){
         return ResponseEntity.ok().body(reviewService.addReview(userDetails, createReviewDTO, gameID));
     }
 
     @PutMapping("/update/{reviewID}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Map<String,Object>> updateReview(@PathVariable Integer reviewID, @Valid @RequestBody CreateReviewDTO createReviewDTO){
         return ResponseEntity.ok().body(reviewService.updateReview(reviewID, createReviewDTO));
     }
     
     @DeleteMapping("/delete/{reviewID}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Map<String,Object>> deleteReview(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Integer reviewID){
         return ResponseEntity.ok().body(reviewService.deleteReview(userDetails, reviewID));
     }

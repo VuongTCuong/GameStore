@@ -29,6 +29,7 @@ public class CartController {
     private CartService cartService;
 
     @GetMapping("/get")
+    @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<List<CartDetail>> getCartDetailbyUser(@AuthenticationPrincipal UserDetails userDetails){
         return ResponseEntity.ok().body(cartService.getCartDetailbyUser(userDetails));
     }
