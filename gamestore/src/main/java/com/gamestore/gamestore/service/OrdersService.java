@@ -16,6 +16,7 @@ import com.gamestore.gamestore.dto.UpdateOrderDTO;
 import com.gamestore.gamestore.entity.Cart;
 import com.gamestore.gamestore.entity.CartDetailID;
 import com.gamestore.gamestore.entity.Game;
+import com.gamestore.gamestore.entity.Invoice;
 import com.gamestore.gamestore.entity.OrderDetail;
 import com.gamestore.gamestore.entity.Orders;
 import com.gamestore.gamestore.entity.User;
@@ -23,6 +24,7 @@ import com.gamestore.gamestore.exception.MainErrorException;
 import com.gamestore.gamestore.repository.CartDetailRepository;
 import com.gamestore.gamestore.repository.CartRepository;
 import com.gamestore.gamestore.repository.GameRepository;
+import com.gamestore.gamestore.repository.InvoiceRepository;
 import com.gamestore.gamestore.repository.OrderDetailRepository;
 import com.gamestore.gamestore.repository.OrdersRepository;
 import com.gamestore.gamestore.repository.UserRepository;
@@ -50,6 +52,9 @@ public class OrdersService {
 
     @Autowired
     private UserRepository userRepo;
+
+    @Autowired
+    private InvoiceRepository invoiceRepo;
 
     // lấy đơn hàng của bản thân - của customer
     public List<Orders> getOrders(UserDetails userDetails){
@@ -102,6 +107,7 @@ public class OrdersService {
             gameRepo.save(game);
         }
     
+        //tạo đơn hàng
         order.setTotalAmount(totalAmount);
         ordersRepo.save(order);
         orderDetailRepo.saveAll(orderDetails);
@@ -109,11 +115,16 @@ public class OrdersService {
         cart.setUpdateDate(LocalDate.now());
         cartRepo.save(cart);
 
-
+        //tạo hoá đơn
+        Invoice invoice = new Invoice();
+        invoice.setOrderID(order.getOrderID());
+        invoice.setPaymentStatus("Chờ thanh toán");
+        invoiceRepo.save(invoice);
         
         return Map.of(
             "status", "thành công",
-            "message", "tạo đơn hàng thành công"
+            "message", "tạo đơn hàng thành công",
+            "result", order
         );
     }
     // cập nhật trạng thái đơn hàng - của admin
