@@ -71,7 +71,7 @@ public class OrdersService {
     //tạo đơn hàng - của user
     public Map<String,Object> addOrder(UserDetails userDetails, List<CreateCartDetailDTO> cartDetailDTOs){ // sử dụng lại CreateCartDetailDTO vì đủ thông tin mà order cần (gameID, price, quantity)
         Cart cart = cartService.getCartbyUser(userDetails);
-        User user = userRepo.findByAccount(userDetails.getUsername()).orElseThrow(()-> new MainErrorException("Không tìm thấy người dùng"));
+        User user = userRepo.findByAccount(userDetails.getUsername()    ).orElseThrow(()-> new MainErrorException("Không tìm thấy người dùng"));
         
         // tạo đơn hàng
         Orders order =  new Orders();
@@ -123,8 +123,7 @@ public class OrdersService {
         
         return Map.of(
             "status", "thành công",
-            "message", "tạo đơn hàng thành công",
-            "result", order
+            "message", "tạo đơn hàng thành công"
         );
     }
     // cập nhật trạng thái đơn hàng - của admin
@@ -137,14 +136,20 @@ public class OrdersService {
         ordersRepo.save(order);
         return Map.of(
             "status", "thành công",
-            "message", "cập nhật đơn hàng thành công",
-            "result",order
+            "message", "cập nhật đơn hàng thành công"
         );
     }
 
     // xoá đơn hàng - customer huỷ khi chưa được xác nhận bởi admin
-    public Map<String,Object> cancelOrder(Integer orderID){
+    public Map<String,Object> cancelOrder(UserDetails userDetails, Integer orderID){
+        String authority = userDetails.getAuthorities().iterator().next().toString();
+        User user = userRepo.findByAccount(userDetails.getUsername()).orElseThrow(()-> new MainErrorException("Không tìm thấy người dùng"));
+        
         Orders order  = ordersRepo.findById(orderID).orElseThrow(()-> new MainErrorException("Mã đơn hàng không tồn tại"));
+        
+        if(user.getUserID()!=order.getUserID() && authority.equals("ROLE_CUSTOMER")){
+            throw new MainErrorException("Bạn không có quyền xoá đơn hàng này");
+        }
         
         if(!order.getState().equals("Chờ xác nhận")){
             throw new MainErrorException("Không thể huỷ đơn hàng hiện tại");
@@ -157,6 +162,12 @@ public class OrdersService {
         }
         ordersRepo.delete(order);
 
+
+        // huỷ hoá đơn
+        Invoice invoice = invoiceRepo.findByOrderID(orderID).orElseThrow(()-> new MainErrorException("Không tìm thấy mã đơn hàng"));
+        invoiceRepo.delete(invoice);
+
+        
         return Map.of(
             "status", "thành công",
             "message", "huỷ đơn hàng thành công"

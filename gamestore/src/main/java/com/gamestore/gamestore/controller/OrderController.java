@@ -54,9 +54,9 @@ public class OrderController {
     }
 
     @DeleteMapping("/cancel/{orderID}")
-    @PreAuthorize("hasRole('CUSTOMER')")
-    public ResponseEntity<Map<String,Object>> cancelEntity(@PathVariable Integer orderID){
-        return ResponseEntity.ok().body(ordersService.cancelOrder(orderID));
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Map<String,Object>> cancelEntity(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Integer orderID){
+        return ResponseEntity.ok().body(ordersService.cancelOrder(userDetails,orderID));
     }
 
 }
