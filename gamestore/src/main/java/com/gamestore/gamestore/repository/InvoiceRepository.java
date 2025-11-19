@@ -21,4 +21,8 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Integer> {
                  "where invoice.orderID = ?1 and invoice.orderID=orders.orderID and orders.userID=user.userID")              
     Object[] detailfindByOrderID(Integer orderID);
 
+    @NativeQuery("select count(*) as totalInvoice "+
+                 "from invoice")
+    Object[] statisticInvoices();
+
 }

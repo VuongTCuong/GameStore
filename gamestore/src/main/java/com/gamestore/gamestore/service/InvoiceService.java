@@ -1,7 +1,7 @@
 package com.gamestore.gamestore.service;
 
 import java.time.LocalDate;
-import java.util.Arrays;
+
 import java.util.List;
 import java.util.Map;
 
@@ -46,7 +46,6 @@ public class InvoiceService {
 
         Object[] firstRow = (Object[]) invoiceDetail[0];
         
-        System.out.println(Arrays.toString(invoiceDetail));
         return Map.of(
             "fullName", firstRow[0],
             "email", firstRow[1],
