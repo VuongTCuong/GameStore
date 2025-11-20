@@ -111,4 +111,56 @@ public class StatisticService {
         }
         return result;
     }
+
+    public List<Map<String,Object>> statistictotalOrderbyUser(){
+        Object[] statistic = ordersRepo.statistictotalOrderbyUser();
+
+        List<Map<String,Object>> result = new ArrayList<>();
+        for (Object o : statistic) {
+            Object[] cur = (Object[]) o;
+            Map<String,Object> temp = Map.of(
+                "userID", cur[0],
+                "fullName", cur[1],
+                "email", cur[2],
+                "totalOrders",cur[3]
+            );
+            result.add(temp);
+        }
+        return result;
+    }
+    public List<Map<String,Object>> statisticGameRevenue(String date1, String date2){
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        LocalDate startDate = LocalDate.parse(date1, inputFormatter);
+        LocalDate endDate = LocalDate.parse(date2, inputFormatter);
+
+        Object[] statistic = ordersRepo.statisticGameRevenue(startDate,endDate);
+
+        List<Map<String,Object>> result = new ArrayList<>();
+        for (Object o : statistic) {
+            Object[] cur = (Object[]) o;
+            Map<String,Object> temp = Map.of(
+                "gameName", cur[0],
+                "totalQuantity", cur[1],
+                "totalRevenue",cur[2]
+            );
+            result.add(temp);
+        }
+        return result;
+    }
+
+    public List<Map<String,Object>> statisticGameOrderDetailDesc(){
+        Object[] statistic = ordersRepo.statisticGameOrderDetailDesc();
+
+        List<Map<String,Object>> result = new ArrayList<>();
+        for (Object o : statistic) {
+            Object[] cur = (Object[]) o;
+            Map<String,Object> temp = Map.of(
+                "gameName", cur[0],
+                "quantity", cur[1],
+                "orderDate", cur[2]
+            );
+            result.add(temp);
+        }
+        return result;
+    }
 }

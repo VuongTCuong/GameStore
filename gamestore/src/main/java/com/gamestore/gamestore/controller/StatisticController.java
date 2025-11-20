@@ -1,6 +1,6 @@
 package com.gamestore.gamestore.controller;
 
-import java.time.LocalDate;
+
 import java.util.List;
 import java.util.Map;
 
@@ -55,5 +55,23 @@ public class StatisticController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<Map<String,Object>>> statisticbyMonth(@RequestParam String startDate, @RequestParam String endDate){
         return ResponseEntity.ok().body(statisticService.statisticbyMonth(startDate,endDate));
+    }
+
+    @GetMapping("/total-Order-User")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<Map<String,Object>>> statistictotalOrderbyUser(){
+        return ResponseEntity.ok().body(statisticService.statistictotalOrderbyUser());
+    }
+
+    @GetMapping("/statistic-Game-Revenue")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<Map<String,Object>>> statisticGameRevenue(@RequestParam String startDate, @RequestParam String endDate){
+        return ResponseEntity.ok().body(statisticService.statisticGameRevenue(startDate,endDate));
+    }
+
+    @GetMapping("/order-detail")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<Map<String,Object>>> statisticGameOrderDetailDesc(){
+        return ResponseEntity.ok().body(statisticService.statisticGameOrderDetailDesc());
     }
 }

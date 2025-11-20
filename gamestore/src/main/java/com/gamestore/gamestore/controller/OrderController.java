@@ -41,6 +41,12 @@ public class OrderController {
         return ResponseEntity.ok().body(ordersService.getAllOrders());
     }
 
+    @GetMapping("/get/{userID}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<Orders>> getOrdersbyUser(@PathVariable Integer userID){
+        return ResponseEntity.ok().body(ordersService.getOrdersbyUser(userID));
+    }
+
     @PostMapping("/add")
     @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<Map<String,Object>> addOrder(@AuthenticationPrincipal UserDetails userDetails, @RequestBody List<CreateCartDetailDTO> cartDetailDTOs){

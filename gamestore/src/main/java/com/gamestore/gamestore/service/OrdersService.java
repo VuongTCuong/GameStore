@@ -68,6 +68,12 @@ public class OrdersService {
         return ordersRepo.findAll();
     }
 
+    // lấy đơn hàng của 1 customer - của admin
+    public List<Orders> getOrdersbyUser(Integer userID){
+        List<Orders> orders = ordersRepo.findByUserID(userID);
+        return orders;
+    }
+
     //tạo đơn hàng - của user
     public Map<String,Object> addOrder(UserDetails userDetails, List<CreateCartDetailDTO> cartDetailDTOs){ // sử dụng lại CreateCartDetailDTO vì đủ thông tin mà order cần (gameID, price, quantity)
         Cart cart = cartService.getCartbyUser(userDetails);
